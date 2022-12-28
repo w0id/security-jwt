@@ -3,6 +3,7 @@ package ru.gb.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.gb.data.Customer;
 import ru.gb.data.User;
 
 @Data
@@ -12,12 +13,12 @@ public class NewUserDto {
 
     private String username;
     private String password;
-    private String email;
+    private Customer customer;
 
     public NewUserDto(User user) {
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.email = user.getEmail();
+        this.customer = user.getCustomer();
     }
 
 }

@@ -39,14 +39,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
-        userService.save(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getEmail(), user.getRoles()));
-        return user;
+    public void addUser(@RequestBody User user) {
+        userService.save(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getCustomer(), user.getRoles()));
     }
 
     @PutMapping
-    public User editUser(@RequestBody User user) {
-        userService.editUser(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getEmail(), user.getRoles()));
-        return user;
+    public void editUser(@RequestBody User user) {
+        userService.editUser(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getCustomer(), user.getRoles()));
     }
 }

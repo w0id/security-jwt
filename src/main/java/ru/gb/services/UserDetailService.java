@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.gb.data.Role;
 import ru.gb.data.User;
-import ru.gb.repositories.IUserRepository;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -20,10 +19,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserDetailService implements UserDetailsService {
 
-    private final IUserRepository userRepository;
+    private final UserService userService;
 
     Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+        return userService.findByUsername(username);
     }
 
     @Override

@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import ru.gb.services.JwtService;
+import ru.gb.wrappers.AuthRequest;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,6 +42,7 @@ public class AuthorizationController {
             return new ResponseEntity<Map<String, Object>>(headerMap, HttpStatus.OK);
 
         }catch (ArithmeticException e) {
+            log.error(e.getMessage(), e);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
 

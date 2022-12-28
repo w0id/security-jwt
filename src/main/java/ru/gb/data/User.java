@@ -24,26 +24,29 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "email")
-    private String email;
-
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Collection<Role> roles;
 
-    public User(final String username, final String password, final String email, final Collection<Role> roles) {
+    @OneToOne(cascade = {CascadeType.PERSIST,
+                        CascadeType.REMOVE})
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
+
+    public User(final String username, final String password, final Customer customer, final Collection<Role> roles) {
         this.username = username;
         this.password = password;
-        this.email = email;
+        this.customer = customer;
         this.roles = roles;
     }
 
-    public User(final String username, final String password, final String email) {
+    public User(final String username, final String password, final Customer customer) {
         this.username = username;
         this.password = password;
-        this.email = email;
+        this.customer = customer;
     }
 
     public Long getId() {
