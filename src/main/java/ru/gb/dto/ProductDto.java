@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.gb.data.Product;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 public class ProductDto {
@@ -12,9 +14,9 @@ public class ProductDto {
 
     private String name;
 
-    private Double cost;
+    private BigDecimal cost;
 
-    public ProductDto(final String name, final Double cost) {
+    public ProductDto(final String name, final BigDecimal cost) {
         this.name = name;
         this.cost = cost;
     }

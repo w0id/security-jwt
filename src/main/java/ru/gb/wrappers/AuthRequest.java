@@ -1,4 +1,4 @@
-package ru.gb.controllers;
+package ru.gb.wrappers;
 
 import lombok.Getter;
 

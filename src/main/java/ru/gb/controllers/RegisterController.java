@@ -17,7 +17,7 @@ public class RegisterController {
 
     @PostMapping
     public NewUserDto registerUser(@RequestBody NewUserDto user) {
-        registerService.save(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getEmail()));
+        registerService.save(new User(user.getUsername(), new BCryptPasswordEncoder().encode(user.getPassword()), user.getCustomer()));
         return user;
     }
 }

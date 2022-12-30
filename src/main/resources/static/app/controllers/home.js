@@ -29,33 +29,41 @@ angular.module('jwtApp')
         $scope.loadCartItems = function () {
             $http.get('api/v1/cart_items')
                 .then(function (response) {
-                    $scope.cartItemsList = response.data;
-                    $scope.cartItemsCount = response.data.length;
+                    $scope.cart = response.data;
                 });
         };
 
-        $scope.addToCart = function (id, name, cost) {
-            body = JSON.stringify(
-                {
-                    id: id,
-                    name: name,
-                    cost: cost
+        $scope.addToCart = function (id) {
+            $http({
+                url: 'api/v1/cart_items',
+                method: 'POST',
+                params: {
+                    id: id
                 }
-            );
-            $http.post('api/v1/cart_items', body)
-                .then(function (response) {
-                    $scope.loadCartItems();
-                });
+            }).then(function (response) {
+                        $scope.loadCartItems();
+                    });
         }
 
-        $scope.deleteFromCart = function (id, name, cost) {
+        $scope.changeQuantity = function (id, quantity) {
+            $http({
+                url: 'api/v1/cart_items',
+                method: 'PUT',
+                params: {
+                    id: id,
+                    quantity: quantity
+                }
+                  }).then(function (response) {
+                      $scope.loadCartItems();
+            })
+        }
+
+        $scope.deleteFromCart = function (id) {
             $http({
                 url: 'api/v1/cart_items',
                 method: 'DELETE',
                 params: {
-                    id: id,
-                    name: name,
-                    cost: cost
+                    id: id
                 }
             })
                 .then(function (response) {

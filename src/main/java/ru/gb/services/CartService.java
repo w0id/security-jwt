@@ -1,32 +1,41 @@
 package ru.gb.services;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.gb.data.Cart;
+import ru.gb.dto.Cart;
 import ru.gb.data.Product;
-import ru.gb.repositories.IProductRepository;
+import ru.gb.exceptions.ResourceNotFoundException;
 
-import java.util.List;
+import javax.annotation.PostConstruct;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CartService {
 
-    private IProductRepository productRepository;
-
+    private final ProductService productService;
     private Cart cart;
 
-
-    public List<Product> getCartItems() {
-        return cart.getCartItems();
+    @PostConstruct
+    public void init() {
+        cart = new Cart();
     }
 
-    public List<Product> addToCart(Product product) {
-        return cart.addProduct(product);
+    public Cart getCurrentCart() {
+        return cart;
     }
 
-    public List<Product> deleteFromCart(Long id, String name, Double cost) {
-        Product product = new Product(id, name, cost);
-        return cart.delProduct(product);
+    public void add(Long id) {
+        Product product = productService.getProduct(id).orElseThrow(() -> new ResourceNotFoundException("Не удается добавить продукт с id: " + id + " в корзину. Продукт не найден"));
+        cart.add(product);
+    }
+
+    public void delete(Long id) {
+        Product product = productService.getProduct(id).orElseThrow(() -> new ResourceNotFoundException("Не удается удалить продукт с id: " + id + " из корзины. Продукт не найден"));
+        cart.delete(product);
+    }
+
+    public void changeQuantity(final Long id, final int quantity) {
+        Product product = productService.getProduct(id).orElseThrow(() -> new ResourceNotFoundException("Не удается изменить количество. Продукт с id: " + id + " не найден"));
+        cart.change(product, quantity);
     }
 }

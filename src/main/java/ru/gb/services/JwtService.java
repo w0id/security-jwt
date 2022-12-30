@@ -1,6 +1,7 @@
 package ru.gb.services;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,11 @@ public class JwtService {
                 .compact();
     }
 
-    public String getUsername(final String bearerTokenValue) {
+    public String getUsername(final String bearerTokenValue) throws ExpiredJwtException{
         return parse(bearerTokenValue).getSubject();
     }
 
-    public List<GrantedAuthority> getAuthority(final String bearerTokenValue) {
+    public List<GrantedAuthority> getAuthority(final String bearerTokenValue) throws ExpiredJwtException{
         List<String> authority = (List<String>) parse(bearerTokenValue).get("authority");
         return authority.stream()
                 .map(SimpleGrantedAuthority::new)
@@ -46,10 +47,10 @@ public class JwtService {
                 .toList();
     }
 
-    private Claims parse(String value) {
-        return Jwts.parser()
-                .setSigningKey(properties.getSecret())
-                .parseClaimsJws(value)
-                .getBody();
+    private Claims parse(String value) throws ExpiredJwtException{
+            return Jwts.parser()
+                    .setSigningKey(properties.getSecret())
+                    .parseClaimsJws(value)
+                    .getBody();
     }
 }

@@ -5,13 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.gb.data.Customer;
 import ru.gb.data.Role;
 import ru.gb.data.User;
-import ru.gb.repositories.IRoleRepository;
+import ru.gb.exceptions.ResourceNotFoundException;
 import ru.gb.repositories.IUserRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -19,10 +22,14 @@ import java.util.Collection;
 public class UserService {
 
     private final IUserRepository userRepository;
-    private final IRoleRepository roleRepository;
+    private final RoleService roleService;
+
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 
     public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow();
+        return userRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException(String.format("Пользователь с id: %s не найден", id)));
     }
 
     public Page<User> getUserFilter(Integer page) {
@@ -33,19 +40,24 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public User save(User user) {
+    public void save(User user) {
         Collection<Role> roles = user.getRoles();
-        roles.stream().forEach(r -> r.setId(roleRepository.findByName(r.getName()).getId()));
+        roles.stream().forEach(r -> r.setId(roleService.getRole(r.getName()).getId()));
         user.setRoles(roles);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    public User editUser(User user) {
+    public void editUser(User user) {
         user.setId(userRepository.findByUsername(user.getUsername()).get().getId());
         Collection<Role> roles = user.getRoles();
-        roles.stream().forEach(r -> r.setId(roleRepository.findByName(r.getName()).getId()));
+        roles.stream().forEach(r -> r.setId(roleService.getRole(r.getName()).getId()));
         user.setRoles(roles);
-        return userRepository.save(user);
+        userRepository.save(user);
+    }
+
+    public Customer getCustomer(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + id + " не найден"))
+                .getCustomer();
     }
 
 }

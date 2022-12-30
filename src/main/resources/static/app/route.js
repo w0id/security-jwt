@@ -84,5 +84,14 @@ angular.module('jwtApp').config(function ($stateProvider, $urlRouterProvider) {
                 controller: 'ManageController'
             }
         }
-    });
+    }).state('order', {
+        parent: 'nav',
+        url: '/order',
+        views: {
+            'content@': {
+                templateUrl: 'app/views/order.html',
+                controller: 'OrderController'
+            }
+        }
+    });;
 });

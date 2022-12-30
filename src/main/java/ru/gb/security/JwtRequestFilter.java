@@ -20,7 +20,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
-
+    // TODO: Доработать перевыпуск токена
     private final JwtService jwtService;
 
     @Override

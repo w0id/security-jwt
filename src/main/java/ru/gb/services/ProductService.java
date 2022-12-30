@@ -10,14 +10,16 @@ import ru.gb.data.Product;
 import ru.gb.repositories.IProductRepository;
 import ru.gb.repositories.specifications.ProductsSpecifications;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class ProductService {
 
     private IProductRepository productRepository;
 
-    public Product getProduct(Long id) {
-        return productRepository.findById(id).orElseThrow();
+    public Optional<Product> getProduct(Long id) {
+        return productRepository.findById(id);
     }
 
     public Product save(Product product) {
