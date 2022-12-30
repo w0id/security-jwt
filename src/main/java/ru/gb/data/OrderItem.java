@@ -21,11 +21,16 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     @Column(name = "quantity")
     private Integer quantity;
 
-    public OrderItem(final Product product, final Integer quantity) {
+    public OrderItem(final Product product, final Order order, final Integer quantity) {
         this.product = product;
+        this.order = order;
         this.quantity = quantity;
     }
 }

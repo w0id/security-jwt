@@ -3,32 +3,32 @@ package ru.gb.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.gb.data.*;
 import ru.gb.exceptions.UnauthorizedUserException;
-import ru.gb.repositories.IOrderDetailRepository;
+import ru.gb.repositories.IOrderRepository;
 import ru.gb.wrappers.OrderWrapper;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
-    private final JwtService jwtService;
     private final UserService userService;
     private final DeliveryService deliveryService;
     private final PickUpService pickUpService;
     private final ProductService productService;
-    private final IOrderDetailRepository orderDetailRepository;
+    private final IOrderRepository orderRepository;
 
-    public Customer getCustomer(String authorization) {
+    public Customer getCustomer(Principal principal) {
         try {
-            String bearerTokenValue = authorization.substring(7);
-            String username = jwtService.getUsername(bearerTokenValue);
-            return userService.getCustomer(userService.findByUsername(username).get().getId());
+            return userService.findByUsername(principal.getName()).get().getCustomer();
         } catch (UnauthorizedUserException e) {
             throw new UnauthorizedUserException("Пользователь не авторизован");
         }
@@ -42,23 +42,30 @@ public class OrderService {
         return pickUpService.getPickUpPoints();
     }
 
-    public void storeOrder(final OrderWrapper orderWrapper) {
-        Collection<OrderItem> orderItems = new ArrayList<>();
-        orderWrapper.getCart().getItems().stream().forEach(i -> {
-            orderItems.add(new OrderItem(productService.getProduct(i.getId()).get(),i.getQuantity()));
-        });
+    @Transactional
+    public void createOrder(final OrderWrapper orderWrapper) {
         Collection<Customer> customers = new ArrayList<>();
         customers.add(orderWrapper.getCustomer());
         Collection<DeliveryType> deliveryTypes = new ArrayList<>();
         deliveryTypes.add(orderWrapper.getDeliveryType());
-        OrderDetail orderDetail = new OrderDetail();
+        Order order = new Order();
         if (null != orderWrapper.getPickUpPoint().getId()) {
             Collection<PickUpPoint> pickUpPoints = new ArrayList<>();
             pickUpPoints.add(orderWrapper.getPickUpPoint());
-            orderDetail = new OrderDetail(orderWrapper.getCustomer(), orderWrapper.getDeliveryType(), orderWrapper.getPickUpPoint(), orderItems);
-        } else {
-            orderDetail = new OrderDetail(orderWrapper.getCustomer(), orderWrapper.getDeliveryType(), orderItems);
+            order.setPickUpPoint(orderWrapper.getPickUpPoint());
         }
-        orderDetailRepository.save(orderDetail);
+        order.setCustomer(orderWrapper.getCustomer());
+        order.setDeliveryType(orderWrapper.getDeliveryType());
+        order.setOrderItems(orderWrapper.getCart().getItems().stream().map(
+                        cartItem -> {
+                            return new OrderItem(
+                                    productService.getProduct(cartItem.getId()).get(),
+                                    order,
+                                    cartItem.getQuantity()
+                            );
+                        }
+                ).collect(Collectors.toList())
+        );
+        orderRepository.save(order);
     }
 }

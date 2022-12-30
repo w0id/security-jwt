@@ -1,18 +1,17 @@
 package ru.gb.data;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collection;
+import java.util.List;
 
-@Data
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "order_details")
-public class OrderDetail {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,21 +30,17 @@ public class OrderDetail {
     @JoinColumn(name = "pickup_point_id")
     private PickUpPoint pickUpPoint;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "orders",
-            joinColumns = @JoinColumn(name = "order_details_id"),
-            inverseJoinColumns = @JoinColumn(name = "order_item_id")
-    )
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private Collection<OrderItem> orderItems;
 
-    public OrderDetail(final Customer customer, final DeliveryType deliveryType, final PickUpPoint pickUpPoint, final Collection<OrderItem> orderItems) {
+    public Order(final Customer customer, final DeliveryType deliveryType, final PickUpPoint pickUpPoint, final List<OrderItem> orderItems) {
         this.customer = customer;
         this.deliveryType = deliveryType;
         this.pickUpPoint = pickUpPoint;
         this.orderItems = orderItems;
     }
 
-    public OrderDetail(final Customer customer, final DeliveryType deliveryType, final Collection<OrderItem> orderItems) {
+    public Order(final Customer customer, final DeliveryType deliveryType, final List<OrderItem> orderItems) {
         this.customer = customer;
         this.deliveryType = deliveryType;
         this.orderItems = orderItems;

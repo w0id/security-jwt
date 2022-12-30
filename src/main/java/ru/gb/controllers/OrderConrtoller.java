@@ -2,7 +2,6 @@ package ru.gb.controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.data.DeliveryType;
@@ -11,6 +10,7 @@ import ru.gb.dto.CustomerDto;
 import ru.gb.services.OrderService;
 import ru.gb.wrappers.OrderWrapper;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -23,8 +23,8 @@ public class OrderConrtoller {
     private final OrderService orderService;
 
     @GetMapping
-    public CustomerDto getCustomer(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-        return new CustomerDto(orderService.getCustomer(authorization));
+    public CustomerDto getCustomer(Principal principal) {
+        return new CustomerDto(orderService.getCustomer(principal));
     }
 
     @GetMapping("/delivery_types")
@@ -38,7 +38,7 @@ public class OrderConrtoller {
     }
 
     @PostMapping
-    public void storeOrder(@RequestBody OrderWrapper orderWrapper) {
-        orderService.storeOrder(orderWrapper);
+    public void createOrder(@RequestBody OrderWrapper orderWrapper) {
+        orderService.createOrder(orderWrapper);
     }
 }

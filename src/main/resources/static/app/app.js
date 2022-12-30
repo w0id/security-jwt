@@ -4,10 +4,24 @@ angular.module('jwtApp', ['ui.router'])
         $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
             if (!AuthService.user) {
                 if (localStorage['token'] && localStorage['user']) {
-                    $http.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
-                    AuthService.user = JSON.parse(localStorage.getItem('user'));
-                    event.preventDefault();
-                    $state.go('home');
+                    try {
+                        let jwt = localStorage.getItem('token');
+                        let payload = JSON.parse(atob(jwt.split('.')[1]));
+                        let currentTime = parseInt(new Date().getTime() / 1000);
+                        if (currentTime > payload.exp) {
+                            console.log("Taken is expired!!!");
+                            localStorage.removeItem('user');
+                            localStorage.removeItem('token');
+                            event.preventDefault();
+                            $state.go('login');
+                        } else {
+                            $http.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+                            AuthService.user = JSON.parse(localStorage.getItem('user'));
+                            event.preventDefault();
+                            $state.go('home');
+                        }
+                    } catch (e) {
+                    }
                 } else {
                     if (toState.name != 'login' && toState.name != 'register') {
                         event.preventDefault();

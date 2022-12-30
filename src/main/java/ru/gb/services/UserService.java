@@ -7,10 +7,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.gb.data.Customer;
 import ru.gb.data.Role;
 import ru.gb.data.User;
-import ru.gb.exceptions.ResourceNotFoundException;
 import ru.gb.repositories.IUserRepository;
 
 import java.util.Collection;
@@ -54,10 +52,4 @@ public class UserService {
         user.setRoles(roles);
         userRepository.save(user);
     }
-
-    public Customer getCustomer(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + id + " не найден"))
-                .getCustomer();
-    }
-
 }
