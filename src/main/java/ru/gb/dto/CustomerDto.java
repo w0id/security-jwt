@@ -22,6 +22,7 @@ public class CustomerDto {
     private String address;
     private String phone;
 
+    //TODO: Сделать конвертеры для всех DTO
     public CustomerDto(Customer customer) {
         this.id = customer.getId();
         this.firstName = customer.getFirstName();

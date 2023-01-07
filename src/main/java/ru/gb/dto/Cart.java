@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+//TODO: Добавить поля создания/изменения во все таблицы
 @Data
 public class Cart {
 

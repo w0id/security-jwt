@@ -2,8 +2,8 @@ package ru.gb.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.gb.dto.Cart;
 import ru.gb.data.Product;
+import ru.gb.dto.Cart;
 import ru.gb.exceptions.ResourceNotFoundException;
 
 import javax.annotation.PostConstruct;
